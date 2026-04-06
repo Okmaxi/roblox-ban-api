@@ -1,32 +1,43 @@
 from flask import Flask, request, jsonify
+import os
 
 app = Flask(__name__)
 
-# 📦 Lista de baneados (temporal)
-banned_users = []
+banned_users = set()
+kicked_users = {}  # userId: reason
 
-# 🔨 Banear usuario
 @app.route("/ban", methods=["POST"])
 def ban():
     data = request.json
     user_id = data.get("userId")
 
-    if user_id not in banned_users:
-        banned_users.append(user_id)
-
-    print("Baneado:", user_id)
-
+    banned_users.add(user_id)
     return jsonify({"success": True})
 
-# 🔍 Verificar si está baneado
+@app.route("/unban", methods=["POST"])
+def unban():
+    data = request.json
+    user_id = data.get("userId")
+
+    banned_users.discard(user_id)
+    return jsonify({"success": True})
+
+@app.route("/kick", methods=["POST"])
+def kick():
+    data = request.json
+    user_id = data.get("userId")
+    reason = data.get("reason", "No reason")
+
+    kicked_users[user_id] = reason
+    return jsonify({"success": True})
+
 @app.route("/check/<int:user_id>", methods=["GET"])
 def check(user_id):
     return jsonify({
-        "banned": user_id in banned_users
+        "banned": user_id in banned_users,
+        "kicked": user_id in kicked_users,
+        "kickReason": kicked_users.get(user_id)
     })
-
-# 🚀 Iniciar servidor
-import os
 
 port = int(os.environ.get("PORT", 3000))
 app.run(host="0.0.0.0", port=port)
