@@ -156,5 +156,22 @@ async def gamekick(ctx, user_id: int, *, reason=None):
         embed.set_footer(text=f"{ctx.author} • {ctx.message.created_at}")
 
         await logs.send(embed=embed)
+from flask import Flask
+import threading
 
+app = Flask('')
+
+@app.route('/')
+def home():
+    return "Bot alive"
+
+def run():
+    app.run(host='0.0.0.0', port=3000)
+
+def keep_alive():
+    t = threading.Thread(target=run)
+    t.start()
+
+# 🔥 ACTIVAR ESTO
+keep_alive()
 bot.run(TOKEN)
