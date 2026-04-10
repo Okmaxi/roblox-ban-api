@@ -2,7 +2,8 @@ import discord
 from discord.ext import commands
 import requests
 
-TOKEN = "MTQ5MDM1OTgwNTQ2OTEzNDkwOQ.GJbLCQ.bPZSy55TkBtCXyMf5XoLURTA1pPVrggoaiaSaE"
+import os
+TOKEN = os.getenv("TOKEN")
 API_URL = "https://roblox-ban-api-hmxd.onrender.com"
 
 intents = discord.Intents.default()
